@@ -1,0 +1,7 @@
+name: BiggerFrogs
+version: '1.21.1-0'
+main: me.truedarklord.biggerFrogs.BiggerFrogs
+api-version: '1.21'
+prefix: BF
+authors: [ TrueDarkLord ]
+description: Feed frogs to make them bigger.

@@ -1,0 +1,5 @@
+frog-food: DIRT     # Food used to make the frog grow.
+explosion:
+  max-frog-size: 5  # Max size till the frog dies.
+  damage: 20.0      # 0 or less will disable damage.
+  range: 5.0        # The radius in which to damage living entities.
