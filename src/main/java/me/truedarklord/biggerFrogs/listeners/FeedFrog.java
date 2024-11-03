@@ -1,8 +1,10 @@
 package me.truedarklord.biggerFrogs.listeners;
 
 import me.truedarklord.biggerFrogs.BiggerFrogs;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.damage.DamageSource;
@@ -34,26 +36,42 @@ public class FeedFrog implements Listener {
         Player player = event.getPlayer();
         EquipmentSlot hand = event.getHand();
         ItemStack item = player.getInventory().getItem(hand);
+        double maxSize = plugin.getConfig().getDouble("explosion.max-frog-size", 5);
 
         if (item == null) return;
 
+        // Validate food
         if (!item.getType().toString().equals(plugin.getConfig().get("frog-food", ""))) return;
 
+        // Check Size
+        AttributeInstance sizeAttribute = frog.getAttribute(Attribute.GENERIC_SCALE);
+        if (sizeAttribute == null) return;
+        double oldSize = sizeAttribute.getBaseValue();
+
+        if (oldSize > maxSize) return;
+
+        // Explode
+        if ((oldSize == maxSize) && plugin.getConfig().getBoolean("explosion.explode")) explode(player, frog);
+
+        // Increase size
         takeFood(player, hand, item);
+        sizeAttribute.setBaseValue(oldSize + 1);
+    }
 
-        AttributeInstance size = frog.getAttribute(Attribute.GENERIC_SCALE);
-        if (size == null) return;
+    private void explode(Player player, LivingEntity livingEntity) {
+        World world = livingEntity.getWorld();
+        Location loc = livingEntity.getLocation();
 
-        double oldSize = size.getBaseValue();
-        size.setBaseValue(++oldSize);
+        world.playSound(loc, Sound.ENTITY_TNT_PRIMED, 1f, 1f);
 
-        if (oldSize > plugin.getConfig().getDouble("explosion.max-frog-size", 5)) {
-            frog.getWorld().spawnParticle(Particle.EXPLOSION, frog.getLocation(), 20);
-            frog.getWorld().playSound(frog.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 2f, 1f);
-            frog.damage(50, player);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            world.spawnParticle(Particle.EXPLOSION, loc, 30);
+            world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 2f, 1f);
+            livingEntity.damage(50, player);
 
-            areaDamage(player, frog);
-        }
+            areaDamage(player, livingEntity);
+        }, 40);
+
     }
 
     private void areaDamage(Player damager, Entity frog) {
