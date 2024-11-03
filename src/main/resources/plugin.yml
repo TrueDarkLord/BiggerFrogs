@@ -1,5 +1,5 @@
 name: BiggerFrogs
-version: '1.21.1-0'
+version: '${version}'
 main: me.truedarklord.biggerFrogs.BiggerFrogs
 api-version: '1.21'
 prefix: BF
