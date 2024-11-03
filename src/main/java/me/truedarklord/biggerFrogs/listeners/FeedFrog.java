@@ -55,6 +55,7 @@ public class FeedFrog implements Listener {
 
         // Increase size
         takeFood(player, hand, item);
+        frog.getWorld().playSound(frog.getLocation(), frog.getEatingSound(item), 1f, 1f);
         sizeAttribute.setBaseValue(oldSize + 1);
     }
 
