@@ -1,15 +1,20 @@
 package me.truedarklord.biggerFrogs;
 
 import me.truedarklord.biggerFrogs.listeners.FeedFrog;
+import me.truedarklord.biggerFrogs.metrics.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class BiggerFrogs extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Metrics metrics = new Metrics(this, 23821);
+
         saveDefaultConfig();
         advertise();
+
         new FeedFrog(this);
+
     }
 
     private void advertise() {
